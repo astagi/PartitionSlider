@@ -1,12 +1,10 @@
 PartitionSlider
 ===============
 
-*    JQuery plugin to make a partition editor widget.     *
-*         Needed at work, shared with everyone            *
-       _____     _____               _____        _____
-|=====|     |===|     |=============|     |======|     |==|
-|#####|     |$$$|     |£££££££££££££|     |&&&&&&|     |OO|
-|=====|_____|===|_____|=============|_____|======|_____|==|
+**JQuery plugin to make a partition editor widget. Needed at work, shared with everyone**
+
+Info
+----
 
 - URL: http://github.com/4ndreaSt4gi/PartitionSlider
 - Description: JQuery plugin to make a partition editor widget.
@@ -14,5 +12,4 @@ PartitionSlider
 - Author: Andrea Stagi
 - Copyright: Copyright 2011 Andrea Stagi
 - License: MIT
-
 
