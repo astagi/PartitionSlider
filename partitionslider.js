@@ -1,6 +1,6 @@
 /**
 * jQuery PartitionSlider Plugin
-* Version: 0.1
+* Version: 1.0dev
 * URL: http://github.com/4ndreaSt4gi/PartitionSlider
 * Description: JQuery plugin to make a partition editor widget.
 * Requires: JQuery
@@ -11,9 +11,9 @@
 
 (function($) {
 
-    $.fn.extend( { 
+    $.fn.extend({
         
-        partitionslider: function(options)  {
+        partitionslider: function(options) {
             
             var defaults =  {
                 containerId : $(this).attr('id'),
@@ -25,54 +25,52 @@
             }
             
             var parameters = $.extend(defaults, options);
-            var nElements = parameters.values.length; 
+            var nElements = parameters.values.length;
 
-            function createMe(parameters) {     
+            function createMe(parameters) {
 
-                var percWidth = parameters.width / 100;      
+                var percWidth = parameters.width / 100;
+                var div = "";
+                var cursorMap = {};
+                var cursorId = 0;
                 
                 for(var i = 0; i < nElements; i++) {
-                    
-                    var str = "<div style='float:left;" +
+
+                    div = "<div style='float:left;" +
                                 "margin-top:2px;" +
                                 "background-color:" + parameters.colors[i] + ";" +
                                 "height:" + parameters.height + "px;" +
                                 "width:" + Math.round(parameters.values[i] * percWidth) + "px;' " +
                                 "id='range" + i + "' ></div>";
 
-                    $("#"+parameters.containerId).append(str);
+                    $("#" + parameters.containerId).append(div);
                     
                     //Ignore the last element
-                    if ( i != nElements - 1) {
-                        var str="<div style='float:left;" +
+                    if (i != nElements - 1) {
+                        cursorId = "cursor" + i;
+                        div = "<div style='float:left;" +
                                     "background-color: #e6e6e6;" +
                                     "cursor:pointer;" +
                                     "border:solid 1px #d4d4d4;" +
                                     "height:" + (parameters.height + 4) + "px;" +
                                     "width:" + parameters.height + "px;' " +
-                                    "id='cursor" + i + "' class='dragCursor'></div>";
-                        $("#" + parameters.containerId).append(str);
+                                    "id='" + cursorId + "' class='dragCursor'></div>";
+                        $("#" + parameters.containerId).append(div);
+                        cursorMap[cursorId] = i;
                     }
                 }
                 
                 $("#" + parameters.containerId).append("<div style='clear:both'></div>");
 
                 $("#" + parameters.containerId + ' .dragCursor').mousedown(function(e) {
-
-                    var selAttrId = $(this).attr('id');
-                    var selectedCursor = 0;
-                    for (var i = 0; i < nElements - 1; i++) {
-                        if ( selAttrId == "cursor" + i ) {
-                            selectedCursor = i;
-                            break;
-                        }
-                    }
+                    var selectedCursor = cursorMap[$(this).attr('id')];
                     e.preventDefault();
-                });                                 
-            }            
+                });
+            }
 
             createMe(parameters);
-            if ( parameters.onStart != null )
+
+            if (parameters.onStart != null)
                 parameters.onStart(parameters.values, parameters.colors);
 
         }
