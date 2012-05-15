@@ -5,7 +5,7 @@
 * Description: JQuery plugin to make a partition editor widget.
 * Requires: JQuery
 * Author: Andrea Stagi
-* Copyright: Copyright 2011 Andrea Stagi
+* Copyright: 2011 Andrea Stagi
 * License: MIT (included in the source)
 */
 
@@ -27,12 +27,18 @@
             var parameters = $.extend(defaults, options);
             var nElements = parameters.values.length;
 
+            var currentCursor = {
+                isSelected : false,
+                leftRangeDivId: null,
+                rightRangeDivId : null,
+            };
+
             function createMe(parameters) {
 
-                var percWidth = parameters.width / 100;
+                var normWidth = parameters.width / 100;
                 var div = "";
-                var cursorMap = {};
                 var cursorId = 0;
+                var cursorMap = {};
                 
                 for(var i = 0; i < nElements; i++) {
 
@@ -40,8 +46,8 @@
                                 "margin-top:2px;" +
                                 "background-color:" + parameters.colors[i] + ";" +
                                 "height:" + parameters.height + "px;" +
-                                "width:" + Math.round(parameters.values[i] * percWidth) + "px;' " +
-                                "id='range" + i + "' ></div>";
+                                "width:" + Math.round(parameters.values[i] * normWidth) + "px;' " +
+                                "id='range" + i + "' class='rangeDiv'></div>";
 
                     $("#" + parameters.containerId).append(div);
                     
@@ -62,10 +68,29 @@
                 
                 $("#" + parameters.containerId).append("<div style='clear:both'></div>");
 
-                $("#" + parameters.containerId + ' .dragCursor').mousedown(function(e) {
+                $("#" + parameters.containerId + ' .dragCursor').mousedown(function(event) {
                     var selectedCursor = cursorMap[$(this).attr('id')];
-                    e.preventDefault();
+                    currentCursor.leftRangeDivId = "#" + parameters.containerId + ' #range' + selectedCursor;
+                    currentCursor.rightRangeDivId = "#" + parameters.containerId + ' #range' + (selectedCursor + 1);
+                    currentCursor.enable = true;
+                    $(document).bind("mousemove", onMouseMove);
+                    $(document).bind("mouseup", onMouseUp);
+                    event.preventDefault();
                 });
+
+            }
+
+            function onMouseMove(event) {
+                if (!currentCursor.enable)
+                    return;
+            }
+
+            function onMouseUp(event) {
+                if (!currentCursor.enable)
+                    return;
+                currentCursor.enable = false;
+                $(document).unbind("mousemove", onMouseMove);
+                $(document).unbind("mouseup", onMouseUp);
             }
 
             createMe(parameters);
