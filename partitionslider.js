@@ -28,9 +28,15 @@
             var nElements = parameters.values.length;
 
             var currentCursor = {
-                isSelected : false,
                 leftRangeDivId: null,
                 rightRangeDivId : null,
+                oldPosition : 0
+            };
+
+            var mouseMoveContext = {
+                delta: 0,
+                widthLeft : 0,
+                widthRight : 0,
             };
 
             function createMe(parameters) {
@@ -51,7 +57,6 @@
 
                     $("#" + parameters.containerId).append(div);
                     
-                    //Ignore the last element
                     if (i != nElements - 1) {
                         cursorId = "cursor" + i;
                         div = "<div style='float:left;" +
@@ -72,7 +77,7 @@
                     var selectedCursor = cursorMap[$(this).attr('id')];
                     currentCursor.leftRangeDivId = "#" + parameters.containerId + ' #range' + selectedCursor;
                     currentCursor.rightRangeDivId = "#" + parameters.containerId + ' #range' + (selectedCursor + 1);
-                    currentCursor.enable = true;
+                    currentCursor.oldPosition = event.pageX;
                     $(document).bind("mousemove", onMouseMove);
                     $(document).bind("mouseup", onMouseUp);
                     event.preventDefault();
@@ -81,14 +86,34 @@
             }
 
             function onMouseMove(event) {
-                if (!currentCursor.enable)
-                    return;
+
+                with(mouseMoveContext) {
+
+                    if (currentCursor.oldPosition == event.pageX)
+                        return;
+
+                    delta = currentCursor.oldPosition - event.pageX;
+
+                    console.log(delta);
+
+                    widthLeft = $(currentCursor.leftRangeDivId).width() - delta;
+                    widthRight = $(currentCursor.rightRangeDivId).width() + delta;
+
+                    if (widthLeft < 0 || widthRight < 0)
+                    {
+                        currentCursor.oldPosition = event.pageX;
+                        return;
+                    }
+
+                    $(currentCursor.leftRangeDivId).width(widthLeft);
+                    $(currentCursor.rightRangeDivId).width(widthRight);
+
+                    currentCursor.oldPosition = event.pageX;
+
+                }
             }
 
             function onMouseUp(event) {
-                if (!currentCursor.enable)
-                    return;
-                currentCursor.enable = false;
                 $(document).unbind("mousemove", onMouseMove);
                 $(document).unbind("mouseup", onMouseUp);
             }
