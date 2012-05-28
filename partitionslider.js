@@ -21,11 +21,12 @@
                 colors : [ "green", "grey", "black", "orange" ],
                 width  : 500,
                 height : 34,
-                onStart : null
+                create : null
             }
             
             var parameters = $.extend(defaults, options);
             var nElements = parameters.values.length;
+            var rangesWidth = 0;
 
             var currentCursor = {
                 leftRangeDivId: null,
@@ -43,17 +44,22 @@
 
                 var normWidth = parameters.width / 100;
                 var div = "";
+                var rangeWidth = 0;
                 var cursorId = 0;
                 var cursorMap = {};
                 
                 for(var i = 0; i < nElements; i++) {
 
+                    rangeWidth = Math.round(parameters.values[i] * normWidth);
+
                     div = "<div style='float:left;" +
                                 "margin-top:2px;" +
                                 "background-color:" + parameters.colors[i] + ";" +
                                 "height:" + parameters.height + "px;" +
-                                "width:" + Math.round(parameters.values[i] * normWidth) + "px;' " +
+                                "width:" + rangeWidth + "px;' " +
                                 "id='range" + i + "' class='rangeDiv'></div>";
+
+                    rangesWidth += rangeWidth;
 
                     $("#" + parameters.containerId).append(div);
                     
@@ -78,7 +84,7 @@
                     currentCursor.leftRangeDivId = "#" + parameters.containerId + ' #range' + selectedCursor;
                     currentCursor.rightRangeDivId = "#" + parameters.containerId + ' #range' + (selectedCursor + 1);
                     currentCursor.oldPosition = event.pageX;
-                    $(document).bind("mousemove", onMouseMove);
+                    $(document).bind("mousemove", {selectedCursor: selectedCursor}, onMouseMove);
                     $(document).bind("mouseup", onMouseUp);
                     event.preventDefault();
                 });
@@ -93,8 +99,6 @@
                         return;
 
                     delta = currentCursor.oldPosition - event.pageX;
-
-                    console.log(delta);
 
                     widthLeft = $(currentCursor.leftRangeDivId).width() - delta;
                     widthRight = $(currentCursor.rightRangeDivId).width() + delta;
@@ -111,6 +115,13 @@
                     currentCursor.oldPosition = event.pageX;
 
                 }
+
+                parameters.values[event.data.selectedCursor] = parseInt(mouseMoveContext.widthLeft / rangesWidth * 100);
+                parameters.values[event.data.selectedCursor + 1] = parseInt(mouseMoveContext.widthRight / rangesWidth * 100);
+
+                if (parameters.onCursorDrag != null)
+                    parameters.onCursorDrag(event.data.selectedCursor, parameters.values);
+
             }
 
             function onMouseUp(event) {
@@ -120,8 +131,8 @@
 
             createMe(parameters);
 
-            if (parameters.onStart != null)
-                parameters.onStart(parameters.values, parameters.colors);
+            if (parameters.create != null)
+                parameters.create(parameters.values, parameters.colors);
 
         }
     });

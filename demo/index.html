@@ -9,7 +9,7 @@
 
         $(document).ready(function(){
             $('#partition').partitionslider({
-                onStart: function(values, colors){
+                create: function(values, colors){
                     $('#drink1val').html(values[0]);
                     $('#drink2val').html(values[1]);
                     $('#drink3val').html(values[2]);
@@ -19,6 +19,13 @@
                     $('#drink2').css("color", colors[1]);
                     $('#drink3').css("color", colors[2]);
                     $('#drink4').css("color", colors[3]);
+                },
+
+                onCursorDrag: function(cursor, values){
+                    $('#drink1val').html(values[0]);
+                    $('#drink2val').html(values[1]);
+                    $('#drink3val').html(values[2]);
+                    $('#drink4val').html(values[3]);
                 },
             });                                    
         });
