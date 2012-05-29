@@ -5,7 +5,6 @@ PartitionSlider
 
 # Info
 
-
 - URL: http://github.com/4ndreaSt4gi/PartitionSlider
 - Description: JQuery plugin to make a partition editor widget.
 - Requires: JQuery
@@ -15,8 +14,10 @@ PartitionSlider
 
 JQuery plugin allows you to make a partition editor widget in a simple way.
 
-Create a simple partition slider
+Create a simple PartitionSlider
 --------------------------------
+
+You can specify the following attributes for your PartitionSlider
 
 - values: our partitions value (percentage).
 - colors: colors of the partitions.
