@@ -1,0 +1,36 @@
+{
+    "name": "jquery.partitionslider",
+    "version": "0.1.0",
+    "title": "jQuery.PartitionSlider()",
+    "author": {
+        "name": "Andrea Stagi",
+        "url": "https://github.com/4ndreaSt4gi"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://www.opensource.org/licenses/MIT"
+        },
+    ],
+    "dependencies": {
+        "jquery": "1"
+    },
+    "description": "The main purpose of this plugin is to create a partition editor widget.",
+    "keywords": [
+        "slider",
+        "partition",
+        "range"
+    ],
+    "homepage": "https://github.com/4ndreaSt4gi/PartitionSlider",
+    "maintainers": [
+        {
+            "name": "Andrea Stagi",
+            "url": "https://github.com/4ndreaSt4gi"
+        }
+    ],
+    "files": [
+        "partitionslider.js"
+    ]
+}
+
+
