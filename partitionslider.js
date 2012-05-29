@@ -1,6 +1,6 @@
 /**
 * jQuery PartitionSlider Plugin
-* Version: 1.0dev
+* Version: 0.1.0
 * URL: http://github.com/4ndreaSt4gi/PartitionSlider
 * Description: JQuery plugin to make a partition editor widget.
 * Requires: JQuery
@@ -13,7 +13,7 @@
 
     $.fn.extend({
         
-        partitionslider: function(options) {
+        PartitionSlider: function(options) {
             
             var defaults =  {
                 containerId : $(this).attr('id'),
