@@ -19,8 +19,8 @@
                 containerId : $(this).attr('id'),
                 values : [ 25, 25, 25, 25 ],
                 colors : [ "green", "grey", "black", "orange" ],
-                width  : 500,
-                height : 34,
+                width  : "100%",
+                height : "50%",
                 create : null
             }
             
@@ -31,18 +31,24 @@
             var currentCursor = {
                 leftRangeDivId: null,
                 rightRangeDivId : null,
-                oldPosition : 0
+                oldPosition : 0,
             };
 
             var mouseMoveContext = {
                 delta: 0,
                 widthLeft : 0,
                 widthRight : 0,
+                widthTotal : 0,
+                oldValue : -1,
+                widths : []
             };
 
             function createMe(parameters) {
 
-                var normWidth = parameters.width / 100;
+                $("#" + parameters.containerId).css("width", parameters.width);
+                $("#" + parameters.containerId).css("height", parameters.height);
+                parameters.height = $("#" + parameters.containerId).height();
+                var normWidth = ($("#" + parameters.containerId).width() - (parameters.height) * (nElements - 1)) / 100;
                 var div = "";
                 var rangeWidth = 0;
                 var cursorId = 0;
@@ -50,14 +56,16 @@
                 
                 for(var i = 0; i < nElements; i++) {
 
-                    rangeWidth = Math.round(parameters.values[i] * normWidth);
+                    rangeWidth = parameters.values[i] * normWidth;
 
                     div = "<div style='float:left;" +
-                                "margin-top:2px;" +
+     
                                 "background-color:" + parameters.colors[i] + ";" +
                                 "height:" + parameters.height + "px;" +
                                 "width:" + rangeWidth + "px;' " +
                                 "id='range" + i + "' class='rangeDiv'></div>";
+
+                    mouseMoveContext.widths[i] = rangeWidth;
 
                     rangesWidth += rangeWidth;
 
@@ -68,8 +76,7 @@
                         div = "<div style='float:left;" +
                                     "background-color: #e6e6e6;" +
                                     "cursor:pointer;" +
-                                    "border:solid 1px #d4d4d4;" +
-                                    "height:" + (parameters.height + 4) + "px;" +
+                                    "height:" + (parameters.height) + "px;" +
                                     "width:" + parameters.height + "px;' " +
                                     "id='" + cursorId + "' class='dragCursor'></div>";
                         $("#" + parameters.containerId).append(div);
@@ -79,11 +86,15 @@
                 
                 $("#" + parameters.containerId).append("<div style='clear:both'></div>");
 
+
                 $("#" + parameters.containerId + ' .dragCursor').mousedown(function(event) {
                     var selectedCursor = cursorMap[$(this).attr('id')];
                     currentCursor.leftRangeDivId = "#" + parameters.containerId + ' #range' + selectedCursor;
                     currentCursor.rightRangeDivId = "#" + parameters.containerId + ' #range' + (selectedCursor + 1);
+                    currentCursor.leftRangeDivNum = selectedCursor;
+                    currentCursor.rightRangeDivNum = selectedCursor + 1;
                     currentCursor.oldPosition = event.pageX;
+                    mouseMoveContext.widthTotal = $(currentCursor.leftRangeDivId).width() + $(currentCursor.rightRangeDivId).width();
                     $(document).bind("mousemove", {selectedCursor: selectedCursor}, onMouseMove);
                     $(document).bind("mouseup", onMouseUp);
                     event.preventDefault();
@@ -93,15 +104,24 @@
 
             function onMouseMove(event) {
 
+                if(mouseMoveContext.oldValue == -1)
+                    mouseMoveContext.oldValue = parameters.values[event.data.selectedCursor + 1] + 
+                        parameters.values[event.data.selectedCursor];
+
                 with(mouseMoveContext) {
+
 
                     if (currentCursor.oldPosition == event.pageX)
                         return;
 
                     delta = currentCursor.oldPosition - event.pageX;
 
-                    widthLeft = $(currentCursor.leftRangeDivId).width() - delta;
-                    widthRight = $(currentCursor.rightRangeDivId).width() + delta;
+                    widthLeft = widths[currentCursor.leftRangeDivNum] - delta;
+                    widthRight = widths[currentCursor.rightRangeDivNum] + delta;
+
+                    console.log(widthLeft);
+                    console.log(widthRight);
+
 
                     if (widthLeft < 0 || widthRight < 0)
                     {
@@ -109,15 +129,32 @@
                         return;
                     }
 
+                    widths[currentCursor.leftRangeDivNum] = widthLeft;
+                    widths[currentCursor.rightRangeDivNum] = widthRight;
                     $(currentCursor.leftRangeDivId).width(widthLeft);
                     $(currentCursor.rightRangeDivId).width(widthRight);
+                    
 
                     currentCursor.oldPosition = event.pageX;
 
                 }
 
-                parameters.values[event.data.selectedCursor] = parseInt(mouseMoveContext.widthLeft / rangesWidth * 100);
-                parameters.values[event.data.selectedCursor + 1] = parseInt(mouseMoveContext.widthRight / rangesWidth * 100);
+                parameters.values[event.data.selectedCursor] = Math.round(mouseMoveContext.widthLeft / rangesWidth * 100);
+                parameters.values[event.data.selectedCursor + 1] = Math.round(mouseMoveContext.widthRight / rangesWidth * 100);
+
+                normalizeValues(event.data.selectedCursor, event.data.selectedCursor + 1);
+
+                if(parameters.values[event.data.selectedCursor] == 0)
+                {
+                    $(currentCursor.rightRangeDivId).width(mouseMoveContext.widthLeft + mouseMoveContext.widthRight);
+                    $(currentCursor.leftRangeDivId).width(0);
+                }
+
+                if(parameters.values[event.data.selectedCursor + 1] == 0)
+                {
+                    $(currentCursor.leftRangeDivId).width(mouseMoveContext.widthLeft + mouseMoveContext.widthRight);
+                    $(currentCursor.rightRangeDivId).width(0);
+                }
 
                 if (parameters.onCursorDrag != null)
                     parameters.onCursorDrag(event.data.selectedCursor, parameters.values);
@@ -127,6 +164,15 @@
             function onMouseUp(event) {
                 $(document).unbind("mousemove", onMouseMove);
                 $(document).unbind("mouseup", onMouseUp);
+                mouseMoveContext.oldValue = -1;
+            }
+
+            function normalizeValues(first, second) {
+                var delta = (parameters.values[first] + parameters.values[second]) - mouseMoveContext.oldValue;
+                if(parameters.values[second] > parameters.values[first])
+                    parameters.values[second] -= delta;
+                else
+                    parameters.values[first] -= delta;
             }
 
             createMe(parameters);

@@ -22,6 +22,7 @@
                 },
 
                 onCursorDrag: function(cursor, values){
+
                     $('#drink1val').html(values[0]);
                     $('#drink2val').html(values[1]);
                     $('#drink3val').html(values[2]);
@@ -36,7 +37,9 @@
 
 <body>
     <div style="margin-top:10px;"/>
-    <div id="partition"></div>
+    <div style="background-color: #C0FFEE; height: 80px ; width: 80%;">
+        <div id="partition"></div>
+    </div>
     <ul>
         <li id="drink1">Mint: <span id="drink1val"></span>cl</li>
         <li id="drink2">White rum: <span id="drink2val"></span>cl</li>
