@@ -19,8 +19,6 @@
                 containerId : $(this).attr('id'),
                 values : [ 25, 25, 25, 25 ],
                 colors : [ "green", "grey", "black", "orange" ],
-                width  : "100%",
-                height : "50%",
                 create : null
             }
             
@@ -45,10 +43,8 @@
 
             function createMe(parameters) {
 
-                $("#" + parameters.containerId).css("width", parameters.width);
-                $("#" + parameters.containerId).css("height", parameters.height);
-                parameters.height = $("#" + parameters.containerId).height();
-                var normWidth = ($("#" + parameters.containerId).width() - (parameters.height) * (nElements - 1)) / 100;
+                var height = $("#" + parameters.containerId).height();
+                var normWidth = ($("#" + parameters.containerId).width() - (height) * (nElements - 1)) / 100;
                 var div = "";
                 var rangeWidth = 0;
                 var cursorId = 0;
@@ -61,7 +57,7 @@
                     div = "<div style='float:left;" +
      
                                 "background-color:" + parameters.colors[i] + ";" +
-                                "height:" + parameters.height + "px;" +
+                                "height:" + height + "px;" +
                                 "width:" + rangeWidth + "px;' " +
                                 "id='range" + i + "' class='rangeDiv'></div>";
 
@@ -76,8 +72,8 @@
                         div = "<div style='float:left;" +
                                     "background-color: #e6e6e6;" +
                                     "cursor:pointer;" +
-                                    "height:" + (parameters.height) + "px;" +
-                                    "width:" + parameters.height + "px;' " +
+                                    "height:" + height + "px;" +
+                                    "width:" + height + "px;' " +
                                     "id='" + cursorId + "' class='dragCursor'></div>";
                         $("#" + parameters.containerId).append(div);
                         cursorMap[cursorId] = i;
