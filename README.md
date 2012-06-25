@@ -21,16 +21,12 @@ You can specify the following attributes for your PartitionSlider
 
 - values: our partitions value (percentage).
 - colors: colors of the partitions.
-- height: height of the widget (pixel).
-- width: width of the widget (pixel).
 
 In the following code example we see how to create our PartitionSlider specifying the attributes and the container (#partition).
 
         $('#partition').PartitionSlider({
             values : [ 25, 25, 30, 20 ],
             colors : [ "green", "yellow", "black", "blue" ],
-            width  : 300,
-            height : 30,
         });
 
 Override 'create' method
